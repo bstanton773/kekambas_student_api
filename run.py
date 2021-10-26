@@ -35,9 +35,10 @@ class Posts(db.Model):
     date_created = db.Column(db.DateTime(), default=dt.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('kekambas.id'))
 
-    def __init__(self, first, last):
-        self.first_name = first
-        self.last_name = last
+    def __init__(self, title, body, user_id):
+        self.title = title
+        self.body = body
+        self.user_id = user_id
 
     def to_dict(self):
         return {
