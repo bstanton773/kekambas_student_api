@@ -1,8 +1,16 @@
+from sqlalchemy.orm import backref
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import base64
 import os
+
+
+cart = db.Table('cart',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id'))
+)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,6 +21,7 @@ class User(db.Model):
     password = db.Column(db.String(250))
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    products = db.relationship('Product', secondary=cart, lazy=True, backref='users')
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
@@ -56,6 +65,14 @@ class User(db.Model):
 
     def revoke_token(self):
         self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+        db.session.commit()
+
+    def add_to_cart(self, product):
+        self.products.append(product)
+        db.session.commit()
+
+    def remove_from_cart(self, product):
+        self.products.remove(product)
         db.session.commit()
 
 
