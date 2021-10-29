@@ -1,5 +1,5 @@
 from . import bp as api
-from .models import User
+from .models import Product, User
 from .auth import basic_auth, token_auth
 from flask import jsonify, request
 
@@ -11,6 +11,10 @@ def get_token():
     token = current_user.get_token()
     return jsonify({'token': token})
 
+
+####################
+# ROUTES FOR USERS #
+####################
 
 @api.route('/users')
 def users():
@@ -58,3 +62,17 @@ def delete_user(id):
         return jsonify({'error': 'You do not have access to delete this user'}), 403
     current_user.delete()
     return jsonify({}), 204
+
+
+#######################
+# ROUTES FOR PRODUCTS #
+#######################
+@api.route('/products')
+def get_products():
+    products = Product.query.all()
+    return jsonify([p.to_dict() for p in products])
+
+@api.route('/products/<id>')
+def get_product(id):
+    product = Product.query.get_or_404(id)
+    return jsonify(product.to_dict())
