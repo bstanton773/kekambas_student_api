@@ -1,6 +1,6 @@
 from app import app, db
 from app.models import Kekambas, Posts
-from app.blueprints.api.models import User
+from app.blueprints.api.models import Product, User
 
 
 @app.shell_context_processor
@@ -9,5 +9,6 @@ def create_context():
         'db': db,
         'Kekambas': Kekambas,
         'Posts': Posts,
-        'User': User
+        'User': User,
+        'Product': Product
     }
