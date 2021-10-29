@@ -76,3 +76,31 @@ def get_products():
 def get_product(id):
     product = Product.query.get_or_404(id)
     return jsonify(product.to_dict())
+
+
+###################
+# ROUTES FOR CART #
+###################
+
+@api.route('/my-cart')
+@token_auth.login_required
+def my_cart():
+    current_user = token_auth.current_user()
+    return jsonify(current_user.to_dict(True))
+
+@api.route('/add-to-cart/<prod_id>', methods=['POST'])
+@token_auth.login_required
+def add_to_cart(prod_id):
+    product = Product.query.get_or_404(prod_id)
+    current_user = token_auth.current_user()
+    current_user.add_to_cart(product)
+    return jsonify(current_user.to_dict(True))
+
+
+@api.route('/remove-from-cart/<prod_id>', methods=['POST'])
+@token_auth.login_required
+def remove_from_cart(prod_id):
+    product = Product.query.get_or_404(prod_id)
+    current_user = token_auth.current_user()
+    current_user.remove_from_cart(product)
+    return jsonify(current_user.to_dict(True))

@@ -34,7 +34,7 @@ class User(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def to_dict(self):
+    def to_dict(self, with_cart=False):
         data = {
             'id': self.id,
             'first_name': self.first_name,
@@ -42,6 +42,8 @@ class User(db.Model):
             'username': self.username,
             'email': self.email,
         }
+        if with_cart:
+            data['cart'] = [p.to_dict() for p in self.products]
         return data
 
     def from_dict(self, data):
